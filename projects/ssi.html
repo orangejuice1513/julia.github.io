@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stanford Student Space Initiative — Julia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">Julia</span>
+    <ul class="nav-links">
+      <li><a href="../index.html">HOME</a></li>
+      <li><a href="../projects.html" class="active">PROJECTS</a></li>
+      <li><a href="../contact.html">CONTACT</a></li>
+    </ul>
+  </nav>
+
+  <main class="page">
+    <div class="project-layout">
+
+      <!-- ── Sidebar ── -->
+      <aside class="project-sidebar">
+        <nav class="sidebar-nav">
+          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
+          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
+          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
+          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
+          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+        </nav>
+      </aside>
+
+      <!-- ── Main content ── -->
+      <div class="project-content">
+
+        <!-- Title block -->
+        <div class="project-header">
+          <h1 class="project-detail-title">Stanford Student Space Initiative</h1>
+          <div class="project-detail-skills">
+            <span class="project-skill">PCB Design</span>
+            <span class="project-skill">KiCad</span>
+            <span class="project-skill">Embedded C</span>
+          </div>
+        </div>
+
+        <!-- Overview -->
+        <section class="project-section" id="overview">
+          <p class="project-section-label">Overview</p>
+          <div class="project-section-body">
+            <div class="project-detail-img-placeholder">Add image here</div>
+            <p>Project overview coming soon. Describe the project goals, motivation, and what it does here.</p>
+          </div>
+        </section>
+
+        <!-- System Architecture -->
+        <section class="project-section" id="architecture">
+          <p class="project-section-label">System Architecture</p>
+          <div class="project-section-body">
+            <div class="project-detail-img-placeholder">Add diagram here</div>
+            <p>Describe the overall system architecture, block diagrams, and how the components interact.</p>
+          </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="project-section" id="implementation">
+          <p class="project-section-label">Implementation</p>
+          <div class="project-section-body">
+            <p>Walk through the implementation details — hardware, firmware, software, or algorithms used.</p>
+          </div>
+        </section>
+
+        <!-- Challenges -->
+        <section class="project-section" id="challenges">
+          <p class="project-section-label">Challenges</p>
+          <div class="project-section-body">
+            <p>Describe the technical challenges encountered and how they were solved.</p>
+          </div>
+        </section>
+
+        <!-- Results & Next Steps -->
+        <section class="project-section" id="results">
+          <p class="project-section-label">Results &amp; Next Steps</p>
+          <div class="project-section-body">
+            <p>Share outcomes, metrics, demos, and what you would do next to improve or extend the project.</p>
+          </div>
+        </section>
+
+      </div><!-- /project-content -->
+    </div><!-- /project-layout -->
+  </main>
+
+  <script>
+    const sections = document.querySelectorAll('.project-section');
+    const navItems = document.querySelectorAll('.sidebar-nav-item');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.section === id);
+          });
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    });
+
+    sections.forEach(s => observer.observe(s));
+
+    navItems.forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.getElementById(item.dataset.section);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>
