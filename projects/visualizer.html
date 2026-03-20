@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Synthesizer & Visualizer — Julia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">Julia</span>
+    <ul class="nav-links">
+      <li><a href="../index.html">HOME</a></li>
+      <li><a href="../projects.html" class="active">PROJECTS</a></li>
+      <li><a href="../contact.html">CONTACT</a></li>
+    </ul>
+  </nav>
+
+  <main class="page">
+    <div class="project-layout">
+
+      <!-- Sidebar -->
+      <aside class="project-sidebar">
+        <a href="../projects.html" class="sidebar-back">&#x2190; Projects</a>
+        <nav class="sidebar-nav">
+          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
+          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
+          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
+          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
+          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <div class="project-content">
+
+        <!-- Header -->
+        <div class="project-header">
+          <h1 class="project-detail-title">Music Synthesizer &amp; Visualizer</h1>
+          <div class="project-detail-skills">
+            <span class="project-skill">Digital Design</span>
+            <span class="project-skill">FPGA</span>
+            <span class="project-skill">Verilog</span>
+            <span class="project-skill">VGA</span>
+            <span class="project-skill">Audio DSP</span>
+          </div>
+        </div>
+
+        <!-- Overview -->
+        <section class="project-section" id="overview">
+          <p class="project-section-label">Overview</p>
+          <div class="project-section-body">
+            <img class="project-detail-img" src="../imgs/ee108_feature.jpg" alt="Music Synthesizer and Visualizer" />
+            <p>A hardware-level music synthesizer and visualizer built on a Xilinx FPGA, inspired by Synthesia piano videos.</p>
+
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Chords</td>
+                  <td>Play up to 8 notes at once</td>
+                </tr>
+                <tr>
+                  <td>Weighted Harmonics</td>
+                  <td>Added 9 harmonics that can be used to create different instruments</td>
+                </tr>
+                <tr>
+                  <td>Multiple Voices</td>
+                  <td>Play 6 different instruments through weighted harmonics and attack/delay/sustain/release (ADSR) envelopes</td>
+                </tr>
+                <tr>
+                  <td>Note Display</td>
+                  <td>Displays notes that are currently playing as chords on a piano and notes in the future yet to be played</td>
+                </tr>
+                <tr>
+                  <td>Piano Synthesia Display</td>
+                  <td>Falling music notes hit a physically accurate piano display at the bottom of the FPGA when the note plays. Different instruments are depicted as different colored blocks.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- System Architecture -->
+        <section class="project-section" id="architecture">
+          <p class="project-section-label">System Architecture</p>
+          <div class="project-section-body">
+            <img class="project-detail-img" src="../imgs/ee108_sys_arch.png" alt="System Architecture Diagram" />
+            <p>The system is divided into two main clock domains: a 100MHz Audio Engine and a 30MHz Visual Engine, bridged safely to prevent metastability.</p>
+            <p><strong>Audio Engine (100MHz):</strong> An MCU manages the global state (Play/Pause/Next), feeding into a <code>song_reader</code> that parses a song ROM. The reader dispatches note data (pitch, duration, instrument) to 8 available <code>note_player</code> modules via a priority encoder. An adder then sums the active waveforms into a single 16-bit audio sample for the codec.</p>
+            <p><strong>Visual Engine (30MHz):</strong> A <code>visualizer</code> module scans ahead in the song ROM to populate a 48-slot active note buffer, which represents the next 48 notes on the screen to be played. It computes the x and y coordinates for every falling block and passes this array to a <code>pixel_generator</code>, which renders the blocks and the piano keyboard to the VGA.</p>
+            <p><strong>Clock Domain Crossing (CDC):</strong> Because the audio and visual systems run at different speeds, critical signals (like <code>play</code> and <code>curr_addr</code>) pass through a brute-force synchronizer (3 DFFs in series) to ensure signal stability across domains.</p>
+          </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="project-section" id="implementation">
+          <p class="project-section-label">Implementation</p>
+          <div class="project-section-body">
+            <p><strong>Algorithmic Envelope Generation</strong> — To calculate the ADSR volume ramps without using expensive hardware division on the FPGA, we precomputed step-per-beat values. We used two counters per note (one counting up from the start, one down from the end) to determine the current envelope phase, and applied linear volume scaling. For staccato notes shorter than the standard envelope, we implemented a priority mux chain to force a release phase, preventing abrupt, popping audio cutoffs.</p>
+            <p><strong>The Look-Ahead Visualizer Math</strong> — To render notes that haven't played yet, the visualizer FSM rapidly scans up to 105 beats ahead in the ROM while the audio plays. We mapped time to physical screen space using an internal time accumulator:</p>
+            <pre class="code-block">y = 420 - (time_accum * 4)</pre>
+            <p>This places the current time (play-line) at pixel 420. A note playing in 20 beats is rendered 80 pixels higher on the screen, creating the falling effect.</p>
+          </div>
+        </section>
+
+        <!-- Challenges -->
+        <section class="project-section" id="challenges">
+          <p class="project-section-label">Challenges</p>
+          <div class="project-section-body">
+
+            <div class="challenge-block">
+              <p class="challenge-num">01</p>
+              <p class="challenge-title">Audio Timing Violations</p>
+              <p><strong>The Problem:</strong> Adding the ADSR envelope shaping created a massive 17ns combinational path through the parameter lookups, multipliers, and priority mux chain — violating our strict 10ns clock period.</p>
+              <p><strong>The Fix:</strong> We pipelined the design. By inserting two pipeline DFFs, we split the combinational logic into three manageable stages, successfully meeting timing with only 2 clock cycles of entirely inaudible latency.</p>
+            </div>
+
+            <div class="challenge-block">
+              <p class="challenge-num">02</p>
+              <p class="challenge-title">Visual Rendering Geometry &amp; Clipping</p>
+              <p><strong>The Problem:</strong> Initially, we planned a linear key layout (64 keys evenly spaced across 800 pixels). This caused visual clipping where falling blocks wouldn't illuminate the full key.</p>
+              <p><strong>The Fix:</strong> We engineered a custom Look-Up Table (<code>note_pos_lut.v</code>) to assign variable key starts and widths (19px for white, 13px for black), mimicking a real piano. We gated the illumination logic on an <code>in_black_height</code> check to ensure the wider bottom portion of a white key fully lights up even if the top is adjacent to a black key.</p>
+              <img class="project-detail-img" src="../imgs/ee108_challenges.png" alt="Before and after key clipping fix" />
+              <p class="img-caption">Before (left): falling notes were not lighting up the entire piano key due to clipping from black keys. After (right): the entire key lights up cleanly.</p>
+            </div>
+
+            <div class="challenge-block">
+              <p class="challenge-num">03</p>
+              <p class="challenge-title">IP Core Debugging &amp; Integration</p>
+              <p><strong>The Problem:</strong> During integration, data passed between the 100MHz and 30MHz domains was becoming corrupted despite using the provided brute-force synchronizer code.</p>
+              <p><strong>The Fix:</strong> We audited the underlying synchronizer Verilog and found a bus-width bug in the provided code. Patching this instantly stabilized the cross-domain signals.</p>
+              <pre class="code-block">// Bug: wire ff1_out, ff2_out;
+// Fix:
+wire [WIDTH-1:0] ff1_out, ff2_out;</pre>
+            </div>
+
+            <div class="challenge-block">
+              <p class="challenge-num">04</p>
+              <p class="challenge-title">Edge-Case Handling: Song Wrapping</p>
+              <p><strong>The Problem:</strong> We needed to prevent the next song's notes from prematurely appearing on screen when reaching the end of the current track.</p>
+              <p><strong>The Fix:</strong> In <code>visualizer.v</code>, <code>song_num</code> is held constant so it never changes during the fetch loop. We implemented a hard boundary (<code>at_rom_end</code>) so the FSM stops at position 127, ensuring <code>scan_pos</code> never wraps back to 0 inappropriately.</p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Results & Next Steps -->
+        <section class="project-section" id="results">
+          <p class="project-section-label">Results &amp; Next Steps</p>
+          <div class="project-section-body">
+            <p>The final system successfully renders complex, multi-track audio synced perfectly to a 60Hz VGA output without dropping frames or breaking timing constraints.</p>
+            <p><strong>Next Steps for V2:</strong></p>
+            <ul class="detail-list">
+              <li><strong>Expanded Memory Architecture</strong> — Increase the size of the frequency and song ROMs to support longer, more complex tracks (my teammate successfully stress-tested the current limits by mapping Yoasobi's <em>Yoru ni Kakeru</em>).</li>
+              <li><strong>Acoustic Modeling</strong> — Introduce more complex harmonic weighting, FM synthesis, or low-pass filtering to make the generated instrument voices sound more organic and realistic.</li>
+            </ul>
+          </div>
+        </section>
+
+      </div><!-- /project-content -->
+    </div><!-- /project-layout -->
+  </main>
+
+  <script>
+    const sections = document.querySelectorAll('.project-section');
+    const navItems = document.querySelectorAll('.sidebar-nav-item');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.section === id);
+          });
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    });
+
+    sections.forEach(s => observer.observe(s));
+
+    navItems.forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.getElementById(item.dataset.section);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>
