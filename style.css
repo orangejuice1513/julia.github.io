@@ -365,7 +365,7 @@ nav {
 
 .contact-title {
   font-size: 5rem;
-  font-weight: 700;
+  font-weight: 100;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text);
@@ -428,14 +428,13 @@ nav {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.6rem 1.2rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  padding: 1.1rem 0;
+  border: none;
+  border-radius: 0;
   width: fit-content;
 }
 
 .contact-item--social:hover {
-  border-color: rgba(255,255,255,0.25);
   opacity: 1;
 }
 
@@ -493,12 +492,7 @@ nav {
 
 /* Vertical divider line */
 .contact-divider {
-  position: absolute;
-  left: 0;
-  top: 10%;
-  bottom: 10%;
-  width: 1px;
-  background: var(--border);
+  display: none;
 }
 
 /* GitHub button */
@@ -540,23 +534,21 @@ nav {
 .project-layout {
   display: flex;
   min-height: calc(100vh - 64px);
-  padding-left: 25vw;
 }
 
 /* ── Left sidebar ── */
 .project-sidebar {
-  position: fixed;
-  left: 0;
+  position: sticky;
   top: 64px;
-  bottom: 0;
-  width: 25vw;
+  align-self: flex-start;
+  height: calc(100vh - 64px);
+  width: 250px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 3rem 2rem 3rem 3rem;
   border-right: 1px solid var(--border);
-  z-index: 10;
-  background: var(--bg);
 }
 
 .sidebar-back {
@@ -842,12 +834,10 @@ code {
   /* Project sidebar hides on mobile */
   .project-layout {
     flex-direction: column;
-    padding-left: 0;
   }
 
   .project-sidebar {
     display: none;
-    width: 25vw;
   }
 
   .project-content {
