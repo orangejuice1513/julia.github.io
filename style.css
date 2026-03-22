@@ -35,7 +35,7 @@ a {
 }
 
 /* ── Nav ── */
-nav {
+body > nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -551,6 +551,7 @@ nav {
   justify-content: center;
   padding: 3rem 2rem 3rem 3rem;
   border-right: 1px solid var(--border);
+  background: var(--bg);
 }
 
 .sidebar-back {
