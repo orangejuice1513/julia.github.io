@@ -124,7 +124,7 @@
             <div class="challenge-block">
               <p class="challenge-num">01</p>
               <p class="challenge-title">Audio Timing Violations</p>
-              <p><strong>The Problem:</strong> Adding the ADSR envelope shaping created a massive 17ns combinational path through the parameter lookups, multipliers, and priority mux chain — violating our strict 10ns clock period.</p>
+              <p><strong>The Problem:</strong> Adding the ADSR envelope shaping created a massive 17ns combinational path through the parameter lookups, multipliers, and priority mux chain, which violated our strict 10ns clock period.</p>
               <p><strong>The Fix:</strong> We pipelined the design. By inserting two pipeline DFFs, we split the combinational logic into three manageable stages, successfully meeting timing with only 2 clock cycles of entirely inaudible latency.</p>
             </div>
 
@@ -162,10 +162,10 @@ wire [WIDTH-1:0] ff1_out, ff2_out;</pre>
           <p class="project-section-label">Results &amp; Next Steps</p>
           <div class="project-section-body">
             <p>The final system successfully renders complex, multi-track audio synced perfectly to a 60Hz VGA output without dropping frames or breaking timing constraints.</p>
-            <p><strong>Next Steps for V2:</strong></p>
+            <p><strong>Next Steps:</strong></p>
             <ul class="detail-list">
-              <li><strong>Expanded Memory Architecture</strong> — Increase the size of the frequency and song ROMs to support longer, more complex tracks (my teammate successfully stress-tested the current limits by mapping Yoasobi's <em>Yoru ni Kakeru</em>).</li>
-              <li><strong>Acoustic Modeling</strong> — Introduce more complex harmonic weighting, FM synthesis, or low-pass filtering to make the generated instrument voices sound more organic and realistic.</li>
+              <li><strong>Expanded Memory Architecture</strong> 1. Increase the size of the frequency and song ROMs to support longer, more complex tracks (my teammate successfully stress-tested the current limits by mapping Yoasobi's <em>Yoru ni Kakeru</em>).</li>
+              <li><strong>Acoustic Modeling</strong> 2. Introduce more complex harmonic weighting, FM synthesis, or low-pass filtering to make the generated instrument voices sound more organic and realistic.</li>
             </ul>
           </div>
         </section>

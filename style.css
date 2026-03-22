@@ -377,7 +377,7 @@ body > nav {
   flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 3rem;
-  padding-left: 10rem;
+  padding-left: 2rem;
 }
 
 .contact-item {
