@@ -26,11 +26,9 @@
       <!-- ── Sidebar ── -->
       <aside class="project-sidebar">
         <nav class="sidebar-nav">
-          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
-          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
-          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
-          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
-          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+          <a href="#description"  class="sidebar-nav-item" data-section="description"> <span>Project Description</span></a>
+          <a href="#pyrocircuit"  class="sidebar-nav-item" data-section="pyrocircuit"> <span>Pyrocircuit</span></a>
+          <a href="#ukf"          class="sidebar-nav-item" data-section="ukf">          <span>Unscented Kalman Filter</span></a>
         </nav>
       </aside>
 
@@ -44,48 +42,95 @@
             <span class="project-skill">PCB Design</span>
             <span class="project-skill">KiCad</span>
             <span class="project-skill">Embedded C</span>
+            <span class="project-skill">Python</span>
           </div>
         </div>
 
-        <!-- Overview -->
-        <section class="project-section" id="overview">
-          <p class="project-section-label">Overview</p>
+        <!-- Project Description -->
+        <section class="project-section" id="description">
+          <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add image here</div>
-            <p>Project overview coming soon. Describe the project goals, motivation, and what it does here.</p>
+            <p>Our team is building a solid motor rocket that reaches 30,000 ft apogee for the 2026 IREC competition with a custom flight computer and airbrakes.</p>
           </div>
         </section>
 
-        <!-- System Architecture -->
-        <section class="project-section" id="architecture">
-          <p class="project-section-label">System Architecture</p>
+        <!-- Pyrocircuit -->
+        <section class="project-section" id="pyrocircuit">
+          <p class="project-section-label">Pyrocircuit</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add diagram here</div>
-            <p>Describe the overall system architecture, block diagrams, and how the components interact.</p>
+
+            <p>The pyrocircuit takes a digital input signal from the MCU on the flight computer in order to light an e-match and deploy the main and drogue parachutes.</p>
+
+            <p>At first, I experimented with an analog pyrocircuit using an NMOS switch, which would allow the required 1A current to flow through the e-match as soon as the MCU pin goes from low to high.</p>
+
+            <p>I iterated through multiple designs, each with their own merits, such as least number of components, single-fault tolerant, and double-fault tolerant. In all designs, I included a voltage divider that senses when the IGNITE signal is sent from the MCU and if the e-match is connected.</p>
+
+            <!-- pyro_rev1: image left, requirements right -->
+            <div style="display:flex; gap:2rem; align-items:flex-start; margin:2rem 0;">
+              <img src="../imgs/pyro_rev1.png" alt="Pyrocircuit Revision 1" style="width:50%; border:1px solid var(--border); flex-shrink:0;" />
+              <ol style="margin:0; padding-left:1.2rem; font-size:0.9rem; line-height:1.7;">
+                <li>The system shall require a physical arming switch to be in the "ARM" position to enable pyro channel outputs.</li>
+                <li>The high-power input from the flight battery shall be protected from overcurrent or short-circuit events by a user-serviceable fuse.</li>
+                <li>The power rail shall include bulk capacitance to supply high-transient current demands during ignition and maintain voltage stability.</li>
+                <li><strong>Default Safe State:</strong> The pyro channel shall default to a safe (OFF) state if the logic input is disconnected, floating, or in a high-impedance state (e.g., during flight computer boot-up).</li>
+                <li><strong>Flight Computer Protection:</strong> The circuit's logic input shall be high-impedance (e.g., a MOSFET gate) to avoid drawing significant current from the flight computer's GPIO pin.</li>
+                <li>The logic input shall include filtering to reject high-frequency noise transients.</li>
+                <li>The system shall provide a visual indicator (e.g., an LED) that illuminates when the flight computer provides the logic-high signal.</li>
+                <li>The system shall provide a logic-level feedback signal to the flight computer, indicating that the armed rail is active.</li>
+                <li>Any sense-lines connected to the high-voltage rail shall be scaled to be within the safe input voltage tolerance of the flight computer's GPIO pins.</li>
+                <li>The pyro channel shall be controlled by two independent, series-switched solid-state devices (e.g., MOSFETs).
+                  <ol style="list-style-type:decimal; padding-left:1.2rem;">
+                    <li>These two switches shall be controlled by separate, independent logic signals from the flight computer to protect against a single-point software or hardware failure.</li>
+                  </ol>
+                </li>
+                <li>The system shall be protected from damage or inadvertent operation in the event of a reverse-polarity connection of the main flight battery.</li>
+              </ol>
+            </div>
+
+            <!-- pyro_rev2: standalone -->
+            <img src="../imgs/pyro_rev2.png" alt="Pyrocircuit Revision 2" class="project-detail-img" />
+
+            <p><strong>Testing</strong></p>
+            <p>I breadboarded the first version of the pyrocircuit and it lit the e-match with a 3.3V signal from an Arduino (after using a voltage divider), but there were many things I didn't consider which could cause the circuit to fail.</p>
+
+            <p><strong>Considerations</strong></p>
+            <ul>
+              <li>System power-up (connecting the main battery) will not induce a current exceeding the 0.3 A no-fire threshold. Sometimes the power supply turning on can turn on the NMOS through its Miller capacitance — can be solved using a high-side PMOS.</li>
+              <li>High-impedance/floating states on the MCU GPIO pins during initialization or reset will not trigger the firing sequence.</li>
+              <li><strong>Single-Fault Tolerance:</strong> The circuit must remain open and safe if any single component fails.</li>
+              <li><strong>Two-Fault Tolerance:</strong> The system requires at least two independent actions to fire. Use an arming switch for the power and another signal for switching the main MOSFET.</li>
+              <li>The circuit must be able to continuously sense e-match continuity without exceeding the no-fire current.</li>
+              <li><strong>No-Fire Limit:</strong> Transient or diagnostic currents through the pyro must remain strictly &lt; 0.3 A under all non-deployment conditions.</li>
+              <li><strong>All-Fire Requirement:</strong> Upon receiving the authorized MCU deployment signal, the circuit must reliably source and sustain &gt; 1 A to the load.</li>
+              <li><strong>Battery Sag:</strong> The battery voltage drops temporarily and causes the MCU to reset or the gate drivers to enter an undefined state where they partially turn on the MOSFETs. The driver current must be &lt; 0.3 A.</li>
+            </ul>
+
+            <!-- pyro_rev3 and pyro_rev4 side by side -->
+            <div style="display:flex; gap:1rem; margin:2rem 0;">
+              <img src="../imgs/pyro_rev3.png" alt="Pyrocircuit Revision 3" style="width:50%; border:1px solid var(--border);" />
+              <img src="../imgs/pyro_rev4.png" alt="Pyrocircuit Revision 4" style="width:50%; border:1px solid var(--border);" />
+            </div>
+
+            <p><strong>Pivot</strong></p>
+            <p>Instead of including so many components on the custom PCB, I decided it would be easier to spec and order an automotive squib driver, which takes into account many of these considerations. I'm currently speccing for an SPI squib driver which takes SPI signals from the MCU instead of just one or two digital signals from GPIO pins. This makes the circuit double-fault tolerant since it wouldn't fire the circuit even if a single or two pins get stuck high on accident.</p>
+            <p>We have to solder a few components (capacitors, pull-down resistors) with the squib driver but overall the circuit would be a lot easier to deal with.</p>
+
+            <!-- squib_rev1 -->
+            <img src="../imgs/squib_rev1.png" alt="Squib Driver Revision 1" class="project-detail-img" />
+
+            <p><strong>More Testing</strong></p>
+            <p>In progress!</p>
+
           </div>
         </section>
 
-        <!-- Implementation -->
-        <section class="project-section" id="implementation">
-          <p class="project-section-label">Implementation</p>
+        <!-- Unscented Kalman Filter -->
+        <section class="project-section" id="ukf">
+          <p class="project-section-label">Unscented Kalman Filter</p>
           <div class="project-section-body">
-            <p>Walk through the implementation details — hardware, firmware, software, or algorithms used.</p>
-          </div>
-        </section>
-
-        <!-- Challenges -->
-        <section class="project-section" id="challenges">
-          <p class="project-section-label">Challenges</p>
-          <div class="project-section-body">
-            <p>Describe the technical challenges encountered and how they were solved.</p>
-          </div>
-        </section>
-
-        <!-- Results & Next Steps -->
-        <section class="project-section" id="results">
-          <p class="project-section-label">Results &amp; Next Steps</p>
-          <div class="project-section-body">
-            <p>Share outcomes, metrics, demos, and what you would do next to improve or extend the project.</p>
+            <p>I'm currently working on a UKF in Python to fuse all the sensor data (IMU, barometer, GPS, high-G accelerometer) and estimate the rocket's state so we know when to deploy the airbrakes.</p>
+            <p>Since the sensor rates are different, I'm using the slower sensor datapoint from the previous reading with all of the new faster sensor readings while waiting for the new slower sensor datapoint.</p>
+            <p>Check back for more progress!</p>
           </div>
         </section>
 
