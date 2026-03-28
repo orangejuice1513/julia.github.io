@@ -3,11 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project — Julia</title>
+  <title>Adaptive Aerodynamics — Julia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        tags: 'none'
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <style>
+    .math-block {
+      overflow-x: auto;
+      margin: 1.1rem 0;
+      padding: 0.9rem 1.1rem;
+      background: var(--surface, #f8f8f8);
+      border: 1px solid var(--border, #e0e0e0);
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .math-label {
+      font-size: 0.75rem;
+      color: var(--muted, #999);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 1.25rem 0;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border, #e0e0e0);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--border, #e0e0e0);
+      font-variant-numeric: tabular-nums;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:not(:first-child),
+    .data-table th:not(:first-child) { text-align: right; }
+    .data-table .highlight td { font-weight: 600; }
+    .table-caption {
+      font-size: 0.8rem;
+      color: var(--muted, #888);
+      margin-top: 0.3rem;
+    }
+    .callout {
+      border-left: 3px solid var(--accent, #555);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+      background: var(--surface, #f8f8f8);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,11 +90,14 @@
       <!-- ── Sidebar ── -->
       <aside class="project-sidebar">
         <nav class="sidebar-nav">
-          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
-          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
-          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
-          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
-          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+          <a href="#description"    class="sidebar-nav-item" data-section="description">   <span>Project Description</span></a>
+          <a href="#related"        class="sidebar-nav-item" data-section="related">       <span>Related Work</span></a>
+          <a href="#model"          class="sidebar-nav-item" data-section="model">         <span>System Model</span></a>
+          <a href="#adaptive"       class="sidebar-nav-item" data-section="adaptive">      <span>Adaptive Noise Model</span></a>
+          <a href="#setup"          class="sidebar-nav-item" data-section="setup">         <span>Experimental Setup</span></a>
+          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results</span></a>
+          <a href="#discussion"     class="sidebar-nav-item" data-section="discussion">    <span>Discussion</span></a>
+          <a href="#limitations"    class="sidebar-nav-item" data-section="limitations">   <span>Limitations &amp; Future Work</span></a>
         </nav>
       </aside>
 
@@ -39,57 +106,280 @@
 
         <!-- Title block -->
         <div class="project-header">
-          <h1 class="project-detail-title">Project Title</h1>
+          <h1 class="project-detail-title">Adaptive Unscented Kalman Filter for FPV Drone Racing</h1>
           <div class="project-detail-skills">
-            <span class="project-skill">Skill A</span>
-            <span class="project-skill">Skill B</span>
-            <span class="project-skill">Skill C</span>
+            <span class="project-skill">Python</span>
+            <span class="project-skill">PyBullet</span>
+            <span class="project-skill">Kalman Filtering</span>
+            <span class="project-skill">Sensor Fusion</span>
           </div>
-          <a href="#" class="btn-github">
-            <svg viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
-            GITHUB
-          </a>
         </div>
 
-        <!-- Overview -->
-        <section class="project-section" id="overview">
-          <p class="project-section-label">Overview</p>
+        <!-- ── Project Description ── -->
+        <section class="project-section" id="description">
+          <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add image here</div>
-            <p>Project overview coming soon. Describe the project goals, motivation, and what it does here.</p>
+            <p>First-Person-View (FPV) drones pull 5G turns and vibrate violently. Standard flight filters like the Unscented Kalman Filter use static noise assumptions that break down in these conditions. If it is tuned for a smooth hover, it becomes overconfident during aggressive racing — but if it is tuned for racing, it ignores perfectly good sensor data during calm flight.</p>
+
+            <p>The root cause is <em>heteroscedasticity</em>: the noise injected into the accelerometer and gyroscope signals is not constant. Motor RPM-induced structural vibrations scale with rotor kinetic energy ($\propto \Omega^2$), while MEMS sensor nonlinearity amplifies errors under high G-loading.</p>
+
+            <p>We built a predictive, physics-informed Adaptive Unscented Kalman Filter (AUKF). Instead of using a static process noise matrix ($Q$), our algorithm recomputes it at every prediction step using two physical proxies:</p>
+
+            <ul>
+              <li><strong>Rotor Vibration:</strong> Proportional to normalized motor RPM squared.</li>
+              <li><strong>Sensor Non-linearity:</strong> Proportional to excess G-loading on the IMU above hover.</li>
+            </ul>
+
+            <img src="../imgs/adaptive_aero_description.png" alt="Adaptive AUKF system overview" class="project-detail-img" />
+
+            <p>We built this in Python and simulated the sensors in PyBullet before testing on 18 real-world flights from the TII Drone Racing Dataset.</p>
           </div>
         </section>
 
-        <!-- System Architecture -->
-        <section class="project-section" id="architecture">
-          <p class="project-section-label">System Architecture</p>
+        <!-- ── Related Work ── -->
+        <section class="project-section" id="related">
+          <p class="project-section-label">Related Work</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add diagram here</div>
-            <p>Describe the overall system architecture, block diagrams, and how the components interact.</p>
+
+            <p><strong>Non-Linear State Estimation</strong></p>
+            <p>The Unscented Kalman Filter (UKF) was introduced by Julier and Uhlmann as a derivative-free alternative to the EKF, using the Unscented Transform to propagate deterministic sigma points through nonlinear dynamics. Wan and Van Der Merwe formalized the practical UKF, capturing posterior statistics to second-order Taylor accuracy. Performance is highly sensitive to the accuracy of $Q$ and $R$.</p>
+
+            <p><strong>Physical IMU Degradation</strong></p>
+            <p>Prior work has shown that airframe vibrations introduce high-frequency inertial noise that can be mistaken for rigid-body motion, triggering fault conditions. Repetitive mechanical shocks — common in racing — degrade MEMS IMU accuracy through nonlinear error modes that static filters cannot track.</p>
+
+            <p><strong>Adaptive Filtering</strong></p>
+            <p>Existing adaptive UKF approaches typically estimate noise online by observing the innovation sequence (i.e., they react to errors after they occur). Our approach is <em>predictive</em>: we update $Q$ from physics-derived quantities <em>before</em> state corruption occurs, directly from motor RPM and inertial loading at each timestep.</p>
           </div>
         </section>
 
-        <!-- Implementation -->
-        <section class="project-section" id="implementation">
-          <p class="project-section-label">Implementation</p>
+        <!-- ── System Model ── -->
+        <section class="project-section" id="model">
+          <p class="project-section-label">System Model</p>
           <div class="project-section-body">
-            <p>Walk through the implementation details — hardware, firmware, software, or algorithms used.</p>
+
+            <p><strong>State Representation</strong></p>
+            <p>The quadrotor state is a 10-dimensional vector combining position, velocity, and attitude as a unit quaternion. Because the quaternion lives on a manifold, the UKF operates on a 9-dimensional error-state $\boldsymbol{\xi} = [\delta\mathbf{p},\, \delta\mathbf{v},\, \delta\boldsymbol{\theta}]^\top$ where $\delta\boldsymbol{\theta}$ is the local rotation-vector attitude error.</p>
+            <div class="math-block">
+              <div class="math-label">State vector</div>
+              $$\mathbf{x}_k = \bigl[\mathbf{p}_k^\top,\; \mathbf{v}_k^\top,\; \mathbf{q}_k^\top\bigr]^\top \in \mathbb{R}^{10}$$
+            </div>
+
+            <p><strong>Prediction Step (IMU as Control Input)</strong></p>
+            <p>IMU measurements — body-frame specific force $\mathbf{a}_b$ and angular rate $\boldsymbol{\omega}_b$ — serve as the control input $\mathbf{u}_k$ driving the prediction step:</p>
+            <div class="math-block">
+              <div class="math-label">Strapdown IMU dynamics</div>
+              $$\mathbf{a}_w = \mathbf{R}_{wb}(\mathbf{q}_k)\,\mathbf{a}_b + \mathbf{g}_w$$
+              $$\mathbf{p}_{k+1} = \mathbf{p}_k + \mathbf{v}_k\Delta t + \tfrac{1}{2}\mathbf{a}_w\Delta t^2$$
+              $$\mathbf{v}_{k+1} = \mathbf{v}_k + \mathbf{a}_w\Delta t$$
+              $$\mathbf{q}_{k+1} = \mathbf{q}_k \otimes \operatorname{quat}(\boldsymbol{\omega}_b\,\Delta t)$$
+            </div>
+            <p>where $\mathbf{g}_w = [0,0,-9.81]^\top$\,m/s² and $\operatorname{quat}(\cdot)$ converts a rotation vector to a unit quaternion.</p>
+
+            <p><strong>Measurement Step (VIO Position)</strong></p>
+            <p>Visual-Inertial Odometry (VIO) provides position updates. The measurement model is a simple state extraction:</p>
+            <div class="math-block">
+              <div class="math-label">Measurement model</div>
+              $$\mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{v}_k = \mathbf{p}_k + \mathbf{v}_k, \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})$$
+            </div>
+            <p>VIO is a camera-based system and is not degraded by motor vibration, so its noise covariance is fixed: $\mathbf{R} = \sigma_{\text{vio}}^2\,\mathbf{I}_3$ with $\sigma_{\text{vio}} = 0.05$\,m.</p>
+
+            <p><strong>UKF Backbone</strong></p>
+            <p>All three filter variants (Hover, Race, Adaptive) share the same Merwe-scaled sigma-point UKF with parameters $\alpha=0.1$, $\beta_{\text{ukf}}=2$, $\kappa=0$, generating $2n+1 = 19$ sigma points from the $n=9$ error-state. Two implementation details were critical:</p>
+            <ul>
+              <li><strong>Quaternion sigma points:</strong> Perturbations in the attitude component are applied via the retraction $\mathbf{q} \leftarrow \mathbf{q} \otimes \operatorname{quat}(\delta\boldsymbol{\theta})$, preserving unit norm throughout propagation.</li>
+              <li><strong>Intrinsic weighted mean:</strong> The posterior mean is computed iteratively in the error-state tangent space until convergence ($\|\delta\mathbf{x}\| < 10^{-10}$, typically 3–5 iterations), maintaining manifold integrity.</li>
+            </ul>
           </div>
         </section>
 
-        <!-- Challenges -->
-        <section class="project-section" id="challenges">
-          <p class="project-section-label">Challenges</p>
+        <!-- ── Adaptive Noise Model ── -->
+        <section class="project-section" id="adaptive">
+          <p class="project-section-label">Adaptive Noise Model</p>
           <div class="project-section-body">
-            <p>Describe the technical challenges encountered and how they were solved.</p>
+
+            <p><strong>Why Adapt Q, Not R?</strong></p>
+            <p>Our original proposal modeled heteroscedastic noise as a dynamic measurement covariance $\mathbf{R}_k$. During implementation we recognized that IMU readings — which are corrupted by motor vibration and G-loading — enter the filter as <em>process inputs</em>, not as measurements. VIO position measurements are unaffected by motor dynamics. Adapting $\mathbf{Q}_k$ is therefore the physically correct location for the heteroscedastic model.</p>
+
+            <p><strong>Time-Varying Q Formulation</strong></p>
+            <p>At each prediction step, the adaptive filter computes a diagonal $\mathbf{Q}_k$ where each per-component variance is a static floor plus two physics-informed terms:</p>
+            <div class="math-block">
+              <div class="math-label">Adaptive process noise</div>
+              $$\mathbf{Q}_k = \operatorname{diag}\!\left(\sigma^2_{p,k}\mathbf{I}_3,\; \sigma^2_{v,k}\mathbf{I}_3,\; \sigma^2_{\theta,k}\mathbf{I}_3\right)$$
+              $$\sigma^2_{\star,k} = \sigma^2_{\star,\text{base}} + \alpha_\star\, r_k + \beta_\star\, g_k$$
+            </div>
+
+            <p><strong>RPM Vibration Term</strong></p>
+            <p>Vibration energy injected into the IMU is proportional to total rotor kinetic energy, which scales as $\Omega_i^2$. The normalized term is bounded in $[0, 1]$, keeping the scaling coefficients $\alpha$ human-interpretable:</p>
+            <div class="math-block">
+              <div class="math-label">RPM term</div>
+              $$r_k = \frac{\sum_{i=1}^{4} \Omega_{i,k}^2}{4\,\Omega_{\max}^2} \in [0,\,1], \quad \Omega_{\max} = 12{,}000\,\text{RPM}$$
+            </div>
+
+            <p><strong>G-Loading Term (with Gravity Subtraction)</strong></p>
+            <p>MEMS accelerometers exhibit nonlinear errors under high acceleration. We define an <em>excess</em> G-loading term that only activates above the hover baseline. The gravity-subtraction step is critical: without it, the raw specific-force magnitude at hover ($\approx 9.81$\,m/s²) would chronically inflate $\mathbf{Q}$ even in calm flight.</p>
+            <div class="math-block">
+              <div class="math-label">G-loading term</div>
+              $$g_k = \max\!\left(0,\; \|\mathbf{a}_{b,k}\| - 9.81\right) \;\; [\text{m/s}^2]$$
+            </div>
+
+            <p><strong>Hyperparameter Configurations</strong></p>
+            <p>The G-loading coefficients $\beta$ were reduced by $100\times$ from initial estimates via a grid search minimizing $|\bar{\text{NEES}} - 3|$ on three representative flights. Each variance is clipped to $[\sigma^2_{\text{base}},\, \sigma^2_{\max}]$ to prevent unbounded inflation.</p>
+
+            <table class="data-table">
+              <caption class="table-caption">Table 1 — Filter Hyperparameter Configurations</caption>
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Hover UKF</th>
+                  <th>Race UKF</th>
+                  <th>Adaptive UKF</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>$\sigma^2_{p,\text{base}}$</td>  <td>$1\times10^{-5}$</td><td>$5\times10^{-5}$</td><td>$3\times10^{-5}$</td></tr>
+                <tr><td>$\sigma^2_{v,\text{base}}$</td>  <td>$5\times10^{-3}$</td><td>$5\times10^{-2}$</td><td>$2\times10^{-2}$</td></tr>
+                <tr><td>$\sigma^2_{\theta,\text{base}}$</td><td>$1\times10^{-5}$</td><td>$5\times10^{-5}$</td><td>$3\times10^{-5}$</td></tr>
+                <tr><td>$\alpha_p$</td>         <td>—</td><td>—</td><td>$2\times10^{-4}$</td></tr>
+                <tr><td>$\alpha_v$</td>         <td>—</td><td>—</td><td>$5\times10^{-2}$</td></tr>
+                <tr><td>$\alpha_\theta$</td>    <td>—</td><td>—</td><td>$2\times10^{-4}$</td></tr>
+                <tr><td>$\beta_p$</td>          <td>—</td><td>—</td><td>$1\times10^{-6}$</td></tr>
+                <tr><td>$\beta_v$</td>          <td>—</td><td>—</td><td>$2\times10^{-4}$</td></tr>
+                <tr><td>$\beta_\theta$</td>     <td>—</td><td>—</td><td>$1\times10^{-6}$</td></tr>
+                <tr><td>$\sigma^2_{\text{vio}}$</td><td>$0.05^2$</td><td>$0.10^2$</td><td>$0.05^2$</td></tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
-        <!-- Results & Next Steps -->
+        <!-- ── Experimental Setup ── -->
+        <section class="project-section" id="setup">
+          <p class="project-section-label">Experimental Setup</p>
+          <div class="project-section-body">
+
+            <p><strong>TII Drone Racing Dataset</strong></p>
+            <p>We validated on 18 flights from the TII Drone Racing Dataset, covering three track geometries: lemniscate (figure-8), ellipse, and circle. Each flight provides IMU readings at ~500 Hz, VIO estimates at ~277 Hz, and motion-capture (MoCap) ground truth.</p>
+            <p>We artificially subsampled VIO to 30 Hz. At the full 277 Hz rate, frequent position corrections mask differences between filter configurations. At 30 Hz, the IMU coasts for ~33 ms between updates, directly exposing the quality of the prediction step and thus the accuracy of $\mathbf{Q}$.</p>
+
+            <p><strong>PyBullet Simulation</strong></p>
+            <p>To complement real-data experiments with controlled conditions, we replayed TII MoCap trajectories inside a PyBullet physics simulation. A synthetic IMU with heteroscedastic noise (floor variance + RPM + G-load scaling), biases modeled as Gauss-Markov processes ($\tau = 20$\,s), and a VIO with 40 ms latency and $\sigma = 0.07$\,m were attached to the simulated drone, allowing evaluation against known synthetic noise parameters.</p>
+
+            <p><strong>Evaluation Metrics</strong></p>
+            <p><strong>RMSE</strong> measures position accuracy:</p>
+            <div class="math-block">
+              <div class="math-label">Root Mean Square Error</div>
+              $$\text{RMSE} = \sqrt{\frac{1}{N}\sum_{k=1}^N \|\hat{\mathbf{p}}_k - \mathbf{p}_k^*\|^2}$$
+            </div>
+            <p><strong>NEES</strong> measures filter calibration — whether the filter's stated uncertainty matches its actual error. For a correctly calibrated 3-DOF estimator, $\mathbb{E}[\text{NEES}] = 3$. Values $\gg 3$ indicate overconfidence, a safety-critical failure mode in autonomous systems.</p>
+            <div class="math-block">
+              <div class="math-label">Normalized Estimation Error Squared</div>
+              $$\text{NEES}_k = (\hat{\mathbf{p}}_k - \mathbf{p}_k^*)^\top \mathbf{P}_{p,k}^{-1} (\hat{\mathbf{p}}_k - \mathbf{p}_k^*)$$
+            </div>
+            <div class="callout">RMSE and NEES together give a complete picture: a filter can achieve low RMSE by chance while being entirely miscalibrated.</div>
+          </div>
+        </section>
+
+        <!-- ── Results ── -->
         <section class="project-section" id="results">
-          <p class="project-section-label">Results &amp; Next Steps</p>
+          <p class="project-section-label">Results</p>
           <div class="project-section-body">
-            <p>Share outcomes, metrics, demos, and what you would do next to improve or extend the project.</p>
+
+            <p><strong>NEES Comparison</strong></p>
+            <p>Our AUKF achieved a mean NEES of 3.0–3.4 across all three track geometries — near the theoretical ideal of 3.0. The hover-tuned baseline failed catastrophically with NEES up to 67.9 during high-G maneuvers, over 22× the calibrated ideal.</p>
+
+            <img src="../imgs/adaptive_aero_nees.png" alt="Mean NEES comparison across filters and tracks" class="project-detail-img" />
+
+            <table class="data-table">
+              <caption class="table-caption">Table 2 — Mean NEES by Filter and Track (All Steps / &gt;2G Steps)</caption>
+              <thead>
+                <tr>
+                  <th>Track</th>
+                  <th>Hover UKF</th>
+                  <th>Race UKF</th>
+                  <th>Adaptive UKF</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Lemniscate</td>  <td>19.6 / 34.8</td><td>4.2 / 7.2</td>  <td><strong>3.0 / 4.5</strong></td></tr>
+                <tr><td>Ellipse-01</td>  <td>23.1 / 67.8</td><td>4.9 / 13.8</td> <td><strong>3.4 / 8.9</strong></td></tr>
+                <tr><td>Ellipse-05</td>  <td>21.1 / 67.9</td><td>4.5 / 14.1</td> <td><strong>3.2 / 9.2</strong></td></tr>
+              </tbody>
+            </table>
+
+            <p>The Race UKF improves over Hover but remains overconfident ($\bar{\text{NEES}} \approx 4.5$) and degrades significantly at high G. The Adaptive UKF maintains calibration significantly better during high-G segments.</p>
+
+            <p><strong>NEES Over Time</strong></p>
+            <p>The Hover UKF exhibits chronic overconfidence punctuated by extreme spikes (&gt;40) during the high-G phase. The Race UKF is better but still peaks above 30. The Adaptive UKF closely tracks the target of 3, with spikes reflecting genuinely harder segments rather than filter miscalibration.</p>
+
+            <img src="../imgs/adaptive_aero_nees_t.png" alt="NEES over time for representative ellipse flight" class="project-detail-img" />
+
+            <p><strong>Position Error with Confidence Intervals</strong></p>
+            <p>All three filters achieve similar raw position errors (~0.1–0.3 m), confirming that RMSE alone is insufficient to distinguish filter quality. Critically, the Adaptive UKF's 95% confidence interval closely envelopes the actual error, while the Hover UKF's is far too tight (overconfident) and the Race UKF's is unnecessarily wide.</p>
+
+            <img src="../imgs/adaptive_aero_pos_error.png" alt="Position error with 95% confidence intervals" class="project-detail-img" />
+
+            <p><strong>PyBullet Simulation Results</strong></p>
+            <p>In the PyBullet simulation with a synthetic heteroscedastic IMU, the AUKF achieved NEES = 2.97 — essentially the theoretical ideal — while slightly increasing RMSE. This is expected: a well-calibrated filter correctly widens its covariance to acknowledge uncertainty rather than staying artificially tight.</p>
+
+            <table class="data-table">
+              <caption class="table-caption">Table 3 — PyBullet Simulation Results (Lemniscate)</caption>
+              <thead>
+                <tr>
+                  <th>Filter</th>
+                  <th>RMSE [m]</th>
+                  <th>NEES</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Hover UKF</td>    <td>0.192</td><td>19.58</td></tr>
+                <tr><td>Race UKF</td>     <td>0.196</td><td>4.17</td></tr>
+                <tr class="highlight"><td>Adaptive UKF</td><td>0.224</td><td>2.97</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── Discussion ── -->
+        <section class="project-section" id="discussion">
+          <p class="project-section-label">Discussion</p>
+          <div class="project-section-body">
+
+            <p><strong>Why NEES Matters More Than RMSE</strong></p>
+            <p>All three filters produce comparable RMSE (&lt;0.25 m). A system designer optimizing purely for RMSE would not distinguish them. However, a filter with NEES = 20 is reporting 20× more confidence than warranted. In a downstream sensor fusion architecture — where position uncertainty gates loop corrections, trusts other sensors, or triggers safety maneuvers — an overconfident state estimate can cause catastrophic failures even with low average error. The Adaptive UKF's NEES ≈ 3 guarantees that its stated uncertainty is truthful.</p>
+
+            <p><strong>Alpha vs. Beta Contribution</strong></p>
+            <p>The RPM-vibration term $r_k \in [0,1]$ contributes modestly in practice: normalized motor thrust at typical racing RPM is only ~0.06 of maximum. The G-loading term $g_k$ is unbounded and dominates the adaptation. The $100\times$ reduction in $\beta$ relative to initial values was necessary to prevent the G-term from chronically overinflating $\mathbf{Q}$ during the sustained high-G segments typical in racing.</p>
+
+            <p><strong>Simulation RPM Normalization Artifact</strong></p>
+            <p>A notable discrepancy emerged in the PyBullet experiments. The simulation configures the drone with a max motor speed of 35,000 RPM, while the AUKF normalization was parameterized for 12,000 RPM. Because the code normalizes using the smaller constant, actual in-flight $r_k$ values are not bounded in $[0,1]$ as intended — at typical racing RPM near 16,000, $r_k \approx 1.78$, and at higher throttle $r_k$ can reach ~8.5. As a result, $\mathbf{Q}$ in simulation is permanently saturated at its maximum capped value regardless of instantaneous flight intensity.</p>
+            <p>Paradoxically, simulation NEES ≈ 2.97 remains near ideal. When $\mathbf{Q}$ is persistently overinflated, the filter reports correspondingly large covariance $\mathbf{P}$, and NEES is the ratio of squared error to reported covariance — so if both inflate proportionally, the ratio stays near 3. The filter is <em>consistently uncertain</em> rather than adaptively uncertain. The slightly higher simulation RMSE (0.224 m vs. 0.192 m) is a direct consequence. This artifact does not affect the real-data experiments, where the $100\times$ $\beta$ downscaling effectively absorbed the overinflated $r_k$.</p>
+
+            <p><strong>Generalizability</strong></p>
+            <p>The parametric noise model — proportional to $\Omega^2$ and $\|\mathbf{a}\|$ — is not specific to drone racing. Any MEMS-reliant system operating across a wide dynamic range (autonomous racing cars, high-vibration industrial manipulators, high-speed aerial delivery) faces the same heteroscedastic challenge and can benefit from the same physics-informed adaptation approach.</p>
+          </div>
+        </section>
+
+        <!-- ── Limitations & Future Work ── -->
+        <section class="project-section" id="limitations">
+          <p class="project-section-label">Limitations &amp; Future Work</p>
+          <div class="project-section-body">
+
+            <p><strong>Current Limitations</strong></p>
+            <ul>
+              <li><strong>RPM normalization mismatch.</strong> The simulation $\Omega_{\max}$ mismatch causes $r_k$ to exceed unity, permanently saturating $\mathbf{Q}$ at its cap. Correcting this — using the actual platform $\Omega_{\max}$ or normalizing RPMs to $[0,1]$ dynamically — is a prerequisite for meaningful sim-to-real comparisons.</li>
+              <li><strong>Offline hyperparameter tuning.</strong> The $\alpha$ and $\beta$ coefficients are fixed after grid search. A physically different drone (different motor plant, frame stiffness, propeller configuration) will have a different vibrational transfer function requiring retuning.</li>
+              <li><strong>Artificial VIO subsampling.</strong> The 30 Hz VIO rate was imposed artificially. The filter architecture should be re-evaluated at native VIO rates before real-time deployment.</li>
+              <li><strong>Position-only NEES.</strong> NEES is computed using only the 3×3 position block of the full 9×9 covariance. Calibration of the velocity and attitude covariances is not directly evaluated.</li>
+              <li><strong>Static measurement noise.</strong> The VIO noise covariance $\mathbf{R}$ is held constant. Real VIO degrades in visually ambiguous environments; a fixed $\mathbf{R}$ will cause overconfident updates in those scenarios.</li>
+            </ul>
+
+            <p><strong>Next Steps</strong></p>
+            <ul>
+              <li><strong>Dynamic RPM normalization.</strong> Normalize each motor's RPM to $[0,1]$ using the platform-reported maximum, or estimate $\Omega_{\max}$ online from a running maximum window. This would also gracefully handle motor degradation over time.</li>
+              <li><strong>Online hyperparameter adaptation.</strong> Treat $(\alpha, \beta)$ as states in an augmented filter and use the innovation sequence to update them in flight, enabling self-calibration on a new platform without prior flights.</li>
+              <li><strong>Full-state NEES evaluation.</strong> Extend the calibration metric to the full 9-dimensional error-state (position, velocity, attitude) using MoCap differentiation for ground-truth velocity.</li>
+              <li><strong>Hardware deployment.</strong> Port the algorithm to C++ for onboard flight computer deployment and profile the per-step $O(n^2)$ $\mathbf{Q}$ computation and quaternion manifold operations against real-time throughput requirements.</li>
+              <li><strong>Predictive noise adaptation.</strong> Use the drone's planned trajectory to predict future noise levels ahead of time — inflating $\mathbf{Q}$ before a sharp corner rather than during it, when the flight controller exposes waypoint targets in advance.</li>
+            </ul>
           </div>
         </section>
 
@@ -98,7 +388,6 @@
   </main>
 
   <script>
-    // Scrollspy: highlight sidebar item when section is in view
     const sections = document.querySelectorAll('.project-section');
     const navItems = document.querySelectorAll('.sidebar-nav-item');
 
@@ -118,7 +407,6 @@
 
     sections.forEach(s => observer.observe(s));
 
-    // Smooth scroll on sidebar click
     navItems.forEach(item => {
       item.addEventListener('click', e => {
         e.preventDefault();
