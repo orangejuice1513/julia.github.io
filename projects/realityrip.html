@@ -8,6 +8,45 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    /* ── Subsection labels ── */
+    .project-subsection-label {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Feature chips ── */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 1rem 0 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .feature-list li::before {
+      content: "—";
+      color: var(--accent, #888);
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,11 +65,9 @@
       <!-- ── Sidebar ── -->
       <aside class="project-sidebar">
         <nav class="sidebar-nav">
-          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
-          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
-          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
-          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
-          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+          <a href="#description"     class="sidebar-nav-item" data-section="description">    <span>Project Description</span></a>
+          <a href="#implementation"  class="sidebar-nav-item" data-section="implementation"> <span>Implementation</span></a>
+          <a href="#next-steps"      class="sidebar-nav-item" data-section="next-steps">     <span>Next Steps</span></a>
         </nav>
       </aside>
 
@@ -44,25 +81,24 @@
             <span class="project-skill">Gaussian Splatting</span>
             <span class="project-skill">Python</span>
             <span class="project-skill">Unity</span>
-            <span class="project-skill">Integrated LLMs</span>
+            <span class="project-skill">LLMs / VLMs</span>
+            <span class="project-skill">Edge AI</span>
           </div>
         </div>
 
-        <!-- Overview -->
-        <section class="project-section" id="overview">
-          <p class="project-section-label">Overview</p>
+        <!-- Project Description -->
+        <section class="project-section" id="description">
+          <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add image here</div>
-            <p>Project overview coming soon. Describe the project goals, motivation, and what it does here.</p>
-          </div>
-        </section>
+            <p>A drone flight simulator that combines high-fidelity Gaussian Splatting digital twin environments with a generative AI commentator. Our goal was to train FPV drone pilots in digital twins of real environments they would fly in, and give them live feedback to keep them engaged.</p>
+            <p>Using an iPhone, RealityRip can reconstruct a room or building into a navigable 3D model within minutes. The generated digital twin can be flown through immediately or modified to simulate obstacles, hazards, or mission scenarios.</p>
 
-        <!-- System Architecture -->
-        <section class="project-section" id="architecture">
-          <p class="project-section-label">System Architecture</p>
-          <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add diagram here</div>
-            <p>Describe the overall system architecture, block diagrams, and how the components interact.</p>
+            <p class="project-subsection-label">Features</p>
+            <ul class="feature-list">
+              <li>Gaussian Splatting to generate a fully 3D, textured model of your world from just an iPhone</li>
+              <li>Both local and cloud AI assistance</li>
+              <li>Physics-based FPV simulator</li>
+            </ul>
           </div>
         </section>
 
@@ -70,23 +106,27 @@
         <section class="project-section" id="implementation">
           <p class="project-section-label">Implementation</p>
           <div class="project-section-body">
-            <p>Walk through the implementation details — hardware, firmware, software, or algorithms used.</p>
+
+            <p class="project-subsection-label">Gaussian Splatting</p>
+            <p>Gaussian splatting is a technique that creates a fully textured 3D model of a real-world environment from video alone. It generates both highly accurate depth maps and texture maps, but comes with a significant compute cost. Given our focus on Edge AI, we augmented the Gaussian Splatting pipeline with the iPhone's built-in LiDAR sensor to reduce latency.</p>
+            <p>We use the iPhone's LiDAR sensor, a forked iPhone app to stream data to our ASUS Ascent GX10, and the raw compute of that machine to run the splatting. We used SplaTAM, a Gaussian Splatting implementation that natively supports iPhone LiDAR input. The depth priors from LiDAR improved stability in darker environments and significantly reduced the compute required to generate a high-quality splat.</p>
+            <p>We forked both SplaTAM and the iPhone app NeRF Capture to work around a networking incompatibility. Both projects communicate over multicast, a P2P protocol blocked by Eduroam. Our forks add support for direct IP addressing and real-time visualization of Gaussian splats during capture.</p>
+
+            <p class="project-subsection-label">Local and Cloud AI</p>
+            <p>RealityRip integrates both local models (running on an ASUS Ascent GX10) and cloud models (GPT-5.2), including VLMs, LLMs, and text-to-speech. GPT-5.2 is used as a VLM to analyze a flyer's pathing against a given route and provide critique.</p>
+            <p>For latency-sensitive tasks such as generating real-time audio feedback, we use local models on the GX10. We use OpenAI's gpt-oss-120b as our LLM, chosen for its relatively lightweight footprint and native FP4 compute support, which takes full advantage of the GX10's best computational unit. For text-to-speech, we use Chatterbox from Resemble.ai — a newly released open model that balances expressiveness and low latency. Running open models locally on the GX10 substantially reduces end-to-end system latency compared to cloud-only approaches.</p>
+
+            <p class="project-subsection-label">Physics-Driven FPV Controller</p>
+            <p>We built the FPV simulator in Unity, primarily for the quality of its documentation and its rich physics system. Unity's native plugin support lets it render the <code>.ply</code> and <code>.gltf</code> files produced by our Gaussian Splatting pipeline directly inside the sim environment. Unity's RigidBody system gave us collision detection along with realistic gravity and acceleration, which is critical for an FPV sim to feel authentic.</p>
+
           </div>
         </section>
 
-        <!-- Challenges -->
-        <section class="project-section" id="challenges">
-          <p class="project-section-label">Challenges</p>
+        <!-- Next Steps -->
+        <section class="project-section" id="next-steps">
+          <p class="project-section-label">Next Steps</p>
           <div class="project-section-body">
-            <p>Describe the technical challenges encountered and how they were solved.</p>
-          </div>
-        </section>
-
-        <!-- Results & Next Steps -->
-        <section class="project-section" id="results">
-          <p class="project-section-label">Results &amp; Next Steps</p>
-          <div class="project-section-body">
-            <p>Share outcomes, metrics, demos, and what you would do next to improve or extend the project.</p>
+            <p>I'd like to integrate full LLM feedback on drone flying — generating customized, skill-aware commentary that helps the user actively improve their technique. In progress!</p>
           </div>
         </section>
 

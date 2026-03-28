@@ -3,11 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project — Julia</title>
+  <title>Autonomous UAV Platform — Julia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+  <style>
+    /* ── Subsection labels within Implementation ── */
+    .project-subsection-label {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── BOM table ── */
+    .bom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 1.5rem 0;
+    }
+
+    .bom-table thead tr {
+      border-bottom: 2px solid var(--border);
+    }
+
+    .bom-table thead th {
+      text-align: left;
+      padding: 0.6rem 1rem 0.6rem 0;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted, #888);
+      font-weight: 600;
+    }
+
+    .bom-table tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bom-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .bom-table tbody td {
+      padding: 0.65rem 1rem 0.65rem 0;
+      line-height: 1.5;
+      vertical-align: top;
+    }
+
+    .bom-table tbody td:first-child {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted, #888);
+      white-space: nowrap;
+      padding-right: 1.5rem;
+    }
+
+    /* ── Math display blocks ── */
+    .math-block {
+      margin: 1.2rem 0;
+      padding: 1.25rem 1.5rem;
+      background: var(--surface, #f8f8f8);
+      border-left: 3px solid var(--accent, #444);
+      border-radius: 2px;
+      overflow-x: auto;
+    }
+
+    .math-block p {
+      margin-bottom: 0.5rem !important;
+    }
+
+    .math-block p:last-child {
+      margin-bottom: 0 !important;
+    }
+
+    /* ── Flight stack list ── */
+    .flight-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flight-stack li {
+      background: var(--surface, #f8f8f8);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,11 +134,10 @@
       <!-- ── Sidebar ── -->
       <aside class="project-sidebar">
         <nav class="sidebar-nav">
-          <a href="#overview"       class="sidebar-nav-item" data-section="overview">      <span>Overview</span></a>
-          <a href="#architecture"   class="sidebar-nav-item" data-section="architecture">  <span>System Architecture</span></a>
-          <a href="#implementation" class="sidebar-nav-item" data-section="implementation"><span>Implementation</span></a>
-          <a href="#challenges"     class="sidebar-nav-item" data-section="challenges">    <span>Challenges</span></a>
-          <a href="#results"        class="sidebar-nav-item" data-section="results">       <span>Results &amp; Next Steps</span></a>
+          <a href="#description"     class="sidebar-nav-item" data-section="description">    <span>Project Description</span></a>
+          <a href="#architecture"    class="sidebar-nav-item" data-section="architecture">   <span>System Architecture</span></a>
+          <a href="#implementation"  class="sidebar-nav-item" data-section="implementation"> <span>Implementation</span></a>
+          <a href="#challenges"      class="sidebar-nav-item" data-section="challenges">     <span>Challenges</span></a>
         </nav>
       </aside>
 
@@ -39,24 +146,23 @@
 
         <!-- Title block -->
         <div class="project-header">
-          <h1 class="project-detail-title">Project Title</h1>
+          <h1 class="project-detail-title">Autonomous UAV Platform</h1>
           <div class="project-detail-skills">
-            <span class="project-skill">Skill A</span>
-            <span class="project-skill">Skill B</span>
-            <span class="project-skill">Skill C</span>
+            <span class="project-skill">ROS2</span>
+            <span class="project-skill">PX4</span>
+            <span class="project-skill">Computer Vision</span>
+            <span class="project-skill">Embedded Systems</span>
+            <span class="project-skill">SLAM</span>
+            <span class="project-skill">MAVLink</span>
           </div>
-          <a href="#" class="btn-github">
-            <svg viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
-            GITHUB
-          </a>
         </div>
 
-        <!-- Overview -->
-        <section class="project-section" id="overview">
-          <p class="project-section-label">Overview</p>
+        <!-- Project Description -->
+        <section class="project-section" id="description">
+          <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add image here</div>
-            <p>Project overview coming soon. Describe the project goals, motivation, and what it does here.</p>
+            <p>This project originally started as an autonomous test drone but later became a drone kit designed to distribute to teams at a hackathon for autonomous GPS-denied navigation. The goal is to create a scalable hardware kit that other engineers can program to perform applications such as reconnaissance or navigation through a disaster site.</p>
+            <p>The platform has successfully passed initial hardware validation and currently supports manual radio flight, which is retained strictly as a hardware kill-switch for safety compliance. Current work is focused on the software stack. We aim to have two flight modes: offboard and autonomous.</p>
           </div>
         </section>
 
@@ -64,8 +170,79 @@
         <section class="project-section" id="architecture">
           <p class="project-section-label">System Architecture</p>
           <div class="project-section-body">
-            <div class="project-detail-img-placeholder">Add diagram here</div>
-            <p>Describe the overall system architecture, block diagrams, and how the components interact.</p>
+
+            <p class="project-subsection-label">Bill of Materials</p>
+
+            <table class="bom-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Component</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Compute</td>
+                  <td>NVIDIA Jetson Orin Nano</td>
+                </tr>
+                <tr>
+                  <td>Perception</td>
+                  <td>Luxonis Oak-D Lite S2</td>
+                </tr>
+                <tr>
+                  <td>Flight Controller</td>
+                  <td>Pixhawk 6C</td>
+                </tr>
+                <tr>
+                  <td>Power Electronics</td>
+                  <td>45A 4-in-1 ESC</td>
+                </tr>
+                <tr>
+                  <td>Power Electronics</td>
+                  <td>PM02V3 Power Module</td>
+                </tr>
+                <tr>
+                  <td>Battery</td>
+                  <td>4S 4000mAh LiPo &mdash; flight power</td>
+                </tr>
+                <tr>
+                  <td>Battery</td>
+                  <td>4S 1000mAh LiPo &mdash; compute power</td>
+                </tr>
+                <tr>
+                  <td>Propulsion</td>
+                  <td>Brushless Motors, 1300kV (2807)</td>
+                </tr>
+                <tr>
+                  <td>Propulsion</td>
+                  <td>7&times;3.5&times;2 Propellers</td>
+                </tr>
+                <tr>
+                  <td>RC Control</td>
+                  <td>RadioMaster Pocket</td>
+                </tr>
+                <tr>
+                  <td>RC Control</td>
+                  <td>FrSky R-XSR Mini Redundancy Receiver, 16CH SBUS/CPPM</td>
+                </tr>
+                <tr>
+                  <td>Frame</td>
+                  <td>Custom Carbon Fiber Frame</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p class="project-subsection-label">Flight Stack</p>
+            <ul class="flight-stack">
+              <li>PX4</li>
+              <li>ROS2</li>
+              <li>OrbSLAM</li>
+              <li>MAVLink DDS</li>
+            </ul>
+
+            <p class="project-subsection-label">Block Diagram</p>
+            <div class="project-detail-img-placeholder">Block diagram rev2 — add image here</div>
+
           </div>
         </section>
 
@@ -73,7 +250,70 @@
         <section class="project-section" id="implementation">
           <p class="project-section-label">Implementation</p>
           <div class="project-section-body">
-            <p>Walk through the implementation details — hardware, firmware, software, or algorithms used.</p>
+
+            <!-- Thrust Calculations -->
+            <p class="project-subsection-label">Thrust Calculations and Power Specs</p>
+
+            <p><strong>Motor Sizing Requirements</strong></p>
+            <p>Starting from the total drone mass and a design thrust-to-weight ratio, we determine the minimum thrust each motor must produce.</p>
+
+            <div class="math-block">
+              <p>$$m_{\text{drone}} = 1.25\text{–}1.3 \text{ kg}, \qquad \text{TWR}_{\text{design}} = 3{:}1$$</p>
+              <p>$$F_{\text{req}} = \text{TWR} \times m_{\max} = 3 \times 1.3 \text{ kg}_f = 3.9 \text{ kg}_f$$</p>
+              <p>$$F_{\text{per motor}} = \frac{F_{\text{req}}}{4} = \frac{3.9}{4} = 0.975 \approx 1 \text{ kg}_f \text{ per motor}$$</p>
+            </div>
+
+            <p><strong>Propeller Speed</strong></p>
+            <p>The no-load RPM is estimated from the battery voltage, motor KV rating, and an assumed efficiency factor.</p>
+
+            <div class="math-block">
+              <p>$$KV = \frac{\text{RPM}}{\text{Volt}}$$</p>
+              <p>$$\text{RPM} = V_{\text{battery}} \times KV \times \eta = 14.8\text{ V} \times 1300\tfrac{\text{RPM}}{\text{V}} \times 0.8 = 15{,}392 \text{ RPM}$$</p>
+            </div>
+
+            <p><strong>Propeller Specifications</strong></p>
+
+            <div class="math-block">
+              <p>$$D = 7\text{ in} = 0.1778\text{ m}, \qquad p = 3.5\text{ in} = 0.0889\text{ m}$$</p>
+            </div>
+
+            <p><strong>Effective Air Velocity</strong></p>
+            <p>The propeller pitch gives the theoretical distance traveled per revolution, yielding the effective air speed through the disk.</p>
+
+            <div class="math-block">
+              <p>$$v = \text{RPM} \times p = 15{,}392 \frac{\text{rev}}{\text{min}} \times \frac{1\text{ min}}{60\text{ s}} \times 0.0889\frac{\text{m}}{\text{rev}} = 22.8\text{ m/s}$$</p>
+            </div>
+
+            <p><strong>Thrust per Motor</strong></p>
+            <p>Using actuator disk / momentum theory, thrust is proportional to the disk area and the square of air velocity.</p>
+
+            <div class="math-block">
+              <p>$$T = \frac{\pi}{4}\,D^2\,\rho\,v^2$$</p>
+              <p>$$= \frac{\pi}{4}\,(0.1778\text{ m})^2 \left(1.225\,\frac{\text{kg}}{\text{m}^3}\right)(22.8\text{ m/s})^2$$</p>
+              <p>$$= 20.14\text{ N}$$</p>
+              <p>$$T = \frac{20.14\text{ N}}{9.81\text{ m/s}^2} = \mathbf{2.053\text{ kg}_f \text{ per motor}}$$</p>
+            </div>
+
+            <p><strong>Total Thrust &amp; Margin</strong></p>
+
+            <div class="math-block">
+              <p>$$F_{\text{total}} = 4 \times 2.053\text{ kg}_f = \mathbf{8.21\text{ kg}_f}$$</p>
+              <p>$$\text{Actual TWR} = \frac{8.21}{1.3} \approx 6.3{:}1 \quad \Bigl(\text{well above the } 3{:}1 \text{ design requirement}\Bigr)$$</p>
+            </div>
+
+            <!-- Radio -->
+            <p class="project-subsection-label">Radio</p>
+            <p>We chose the CC2500-based FrSky protocol for its compatibility with PX4. The radio was calibrated in QGroundControl to verify basic flight, but its sole operational purpose is to provide a manual kill switch for safety compliance.</p>
+
+            <!-- Autonomous Algorithms -->
+            <p class="project-subsection-label">Autonomous Algorithms</p>
+
+            <p>To implement GPS-denied navigation, we fuse high-frequency IMU data (internal to the flight controller) with low-frequency visual inertial odometry (VIO) from the camera. We configured the ECL EKF parameters in PX4 and created a ROS2 node that subscribes to the camera and publishes to the PX4 EKF using the MicroXRCE-DDS communication protocol.</p>
+
+            <p>For path planning, we created a node that executes the D* Lite algorithm. This node subscribes to the camera for obstacle detection and to the Pixhawk EKF2 for state estimation, and publishes the immediate next target vector.</p>
+
+            <p>The offboard control node subscribes to the path planning node and publishes the <code>trajectory_setpoint</code>, <code>offboard_control_mode</code>, and <code>vehicle_command</code> topics within PX4 to execute the planned path.</p>
+
           </div>
         </section>
 
@@ -81,15 +321,8 @@
         <section class="project-section" id="challenges">
           <p class="project-section-label">Challenges</p>
           <div class="project-section-body">
-            <p>Describe the technical challenges encountered and how they were solved.</p>
-          </div>
-        </section>
-
-        <!-- Results & Next Steps -->
-        <section class="project-section" id="results">
-          <p class="project-section-label">Results &amp; Next Steps</p>
-          <div class="project-section-body">
-            <p>Share outcomes, metrics, demos, and what you would do next to improve or extend the project.</p>
+            <p>Delivering a stable power supply to the Jetson proved difficult. Battery voltage sags whenever the motors are running, creating a risk of brownout to the onboard computer.</p>
+            <p>We first tried voltage regulators, but the only units capable of tolerating the Jetson's 5A peak draw did not work reliably under load. We ultimately settled on a separate, dedicated battery to power the Jetson exclusively. While this added weight, it guaranteed a stable voltage and smooth flight. The 1300kV motors produce roughly 8.2 kg of total thrust while the full platform sits at approximately 1.5 kg, so the thrust margin was sufficient to absorb the extra battery mass.</p>
           </div>
         </section>
 
@@ -98,7 +331,6 @@
   </main>
 
   <script>
-    // Scrollspy: highlight sidebar item when section is in view
     const sections = document.querySelectorAll('.project-section');
     const navItems = document.querySelectorAll('.sidebar-nav-item');
 
@@ -118,7 +350,6 @@
 
     sections.forEach(s => observer.observe(s));
 
-    // Smooth scroll on sidebar click
     navItems.forEach(item => {
       item.addEventListener('click', e => {
         e.preventDefault();
