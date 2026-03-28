@@ -68,23 +68,23 @@
             <!-- pyro_rev1: image left, requirements right -->
             <div style="display:flex; gap:2rem; align-items:flex-start; margin:2rem 0;">
               <img src="../imgs/pyro_rev1.png" alt="Pyrocircuit Revision 1" style="width:50%; border:1px solid var(--border); flex-shrink:0;" />
-              <ol style="margin:0; padding-left:1.2rem; font-size:0.9rem; line-height:1.7;">
-                <li>The system shall require a physical arming switch to be in the "ARM" position to enable pyro channel outputs.</li>
-                <li>The high-power input from the flight battery shall be protected from overcurrent or short-circuit events by a user-serviceable fuse.</li>
-                <li>The power rail shall include bulk capacitance to supply high-transient current demands during ignition and maintain voltage stability.</li>
-                <li><strong>Default Safe State:</strong> The pyro channel shall default to a safe (OFF) state if the logic input is disconnected, floating, or in a high-impedance state (e.g., during flight computer boot-up).</li>
-                <li><strong>Flight Computer Protection:</strong> The circuit's logic input shall be high-impedance (e.g., a MOSFET gate) to avoid drawing significant current from the flight computer's GPIO pin.</li>
-                <li>The logic input shall include filtering to reject high-frequency noise transients.</li>
-                <li>The system shall provide a visual indicator (e.g., an LED) that illuminates when the flight computer provides the logic-high signal.</li>
-                <li>The system shall provide a logic-level feedback signal to the flight computer, indicating that the armed rail is active.</li>
-                <li>Any sense-lines connected to the high-voltage rail shall be scaled to be within the safe input voltage tolerance of the flight computer's GPIO pins.</li>
-                <li>The pyro channel shall be controlled by two independent, series-switched solid-state devices (e.g., MOSFETs).
-                  <ol style="list-style-type:decimal; padding-left:1.2rem;">
-                    <li>These two switches shall be controlled by separate, independent logic signals from the flight computer to protect against a single-point software or hardware failure.</li>
-                  </ol>
+              <ul style="margin:0; padding-left:0; list-style:none; font-size:0.9rem; line-height:1.7;">
+                <li><strong>2.0</strong> The system shall require a physical arming switch to be in the "ARM" position to enable pyro channel outputs.</li>
+                <li><strong>2.1</strong> The high-power input from the flight battery shall be protected from overcurrent or short-circuit events by a user-serviceable fuse.</li>
+                <li><strong>2.2</strong> The power rail shall include bulk capacitance to supply high-transient current demands during ignition and maintain voltage stability.</li>
+                <li><strong>2.3</strong> <strong>Default Safe State:</strong> The pyro channel shall default to a safe (OFF) state if the logic input is disconnected, floating, or in a high-impedance state (e.g., during flight computer boot-up).</li>
+                <li><strong>2.4</strong> <strong>Flight Computer Protection:</strong> The circuit's logic input shall be high-impedance (e.g., a MOSFET gate) to avoid drawing significant current from the flight computer's GPIO pin.</li>
+                <li><strong>2.5</strong> The logic input shall include filtering to reject high-frequency noise transients.</li>
+                <li><strong>2.6</strong> The system shall provide a visual indicator (e.g., an LED) that illuminates when the flight computer provides the logic-high signal.</li>
+                <li><strong>2.7</strong> The system shall provide a logic-level feedback signal to the flight computer, indicating that the armed rail is active.</li>
+                <li><strong>2.8</strong> Any sense-lines connected to the high-voltage rail shall be scaled to be within the safe input voltage tolerance of the flight computer's GPIO pins.</li>
+                <li><strong>2.9</strong> The pyro channel shall be controlled by two independent, series-switched solid-state devices (e.g., MOSFETs).
+                  <ul style="list-style:none; padding-left:1.5rem;">
+                    <li><strong>2.9.1</strong> These two switches shall be controlled by separate, independent logic signals from the flight computer to protect against a single-point software or hardware failure.</li>
+                  </ul>
                 </li>
-                <li>The system shall be protected from damage or inadvertent operation in the event of a reverse-polarity connection of the main flight battery.</li>
-              </ol>
+                <li><strong>2.10</strong> The system shall be protected from damage or inadvertent operation in the event of a reverse-polarity connection of the main flight battery.</li>
+              </ul>
             </div>
 
             <!-- pyro_rev2: standalone -->
