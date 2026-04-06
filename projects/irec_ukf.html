@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stanford Student Space Initiative — Julia</title>
+  <title>IREC UKF — Julia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -27,6 +27,8 @@
       <aside class="project-sidebar">
         <nav class="sidebar-nav">
           <a href="#description" class="sidebar-nav-item" data-section="description"><span>Project Description</span></a>
+          <a href="#launch3"     class="sidebar-nav-item" data-section="launch3">    <span>Launch 3</span></a>
+          <a href="#ukf"         class="sidebar-nav-item" data-section="ukf">        <span>Unscented Kalman Filter</span></a>
         </nav>
       </aside>
 
@@ -35,12 +37,12 @@
 
         <!-- Title block -->
         <div class="project-header">
-          <h1 class="project-detail-title">Stanford Student Space Initiative</h1>
+          <h1 class="project-detail-title">IREC UKF</h1>
           <div class="project-detail-skills">
-            <span class="project-skill">PCB Design</span>
-            <span class="project-skill">KiCad</span>
-            <span class="project-skill">Embedded C</span>
             <span class="project-skill">Python</span>
+            <span class="project-skill">State Estimation</span>
+            <span class="project-skill">Unscented Kalman Filter</span>
+            <span class="project-skill">Embedded C</span>
           </div>
         </div>
 
@@ -49,6 +51,28 @@
           <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
             <p>Our team is building a solid motor rocket that reaches 30,000 ft apogee for the 2026 IREC competition with a custom flight computer and airbrakes.</p>
+          </div>
+        </section>
+
+        <!-- Launch 3 -->
+        <section class="project-section" id="launch3">
+          <p class="project-section-label">III. Launch 3</p>
+          <div class="project-section-body">
+            <p>The purpose of this launch was to gather airbrake data for the Kalman filter sims. For the AV bay design, we moved from a sled to a triangle, thinking we could fit more components. However, we ran into many integration issues: it was difficult to access the inner part of the triangle for testing and the harnessing was extremely difficult. Also, avionics and airbrakes did not coordinate integration very well so we ended up guiding long wires through the airbrakes to the other side in order to control the servos.</p>
+            <img src="../imgs/triangle_avbay.JPG" alt="Triangle AV Bay" class="project-detail-img" />
+
+            <p>The launch failed and the rocket was completely destroyed due to instability from an unsupported aluminum box for the payload in the middle of the rocket body, connecting the bottom half to the top half.</p>
+            <p>We aim to create a design with disks perpendicular to the rocket body which can slide out horizontally for easy access to components for the next launch.</p>
+          </div>
+        </section>
+
+        <!-- Unscented Kalman Filter -->
+        <section class="project-section" id="ukf">
+          <p class="project-section-label">Unscented Kalman Filter</p>
+          <div class="project-section-body">
+            <p>I'm currently working on a UKF in Python to fuse all the sensor data (IMU, barometer, GPS, high-G accelerometer) and estimate the rocket's state so we know when to deploy the airbrakes.</p>
+            <p>Since the sensor rates are different, I'm using the slower sensor datapoint from the previous reading with all of the new faster sensor readings while waiting for the new slower sensor datapoint.</p>
+            <p>Check back for more progress!</p>
           </div>
         </section>
 
