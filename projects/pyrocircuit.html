@@ -105,6 +105,40 @@
       width: calc(50% - 0.375rem);
       min-width: 180px;
     }
+
+    /* PDF link blocks */
+    .pdf-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .pdf-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 1.2rem;
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pdf-link:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+    .pdf-link .pdf-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .wip-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +181,16 @@
           <p class="project-section-label">Project Description</p>
           <div class="project-section-body">
             <p>Our team is building a solid motor rocket that reaches 30,000 ft apogee for the 2026 IREC competition with a custom flight computer and airbrakes.</p>
+
+            <div class="pdf-links">
+              <a class="pdf-link" href="../pyrocircuit design iterations.pdf" target="_blank">
+                <span class="pdf-icon">&#128196;</span> Pyrocircuit Design Iterations
+              </a>
+              <a class="pdf-link" href="../pyrocircuit final design testbenches.pdf" target="_blank">
+                <span class="pdf-icon">&#128196;</span> Final Design Testbenches
+              </a>
+            </div>
+            <p class="wip-note">This page is a work in progress — more details and test results coming soon.</p>
           </div>
         </section>
 
@@ -193,15 +237,23 @@
             <!-- ── Design 1 ── -->
             <div class="iteration">
               <h3>Design 1</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 1" class="iteration-img" /> -->
+              <p>Basic NMOS switch with PMOS high-side driver. Features sensing for the arming rail via a voltage divider (R8/R9). Problem: e-match continuity sense R7 doesn't work because the current just flows through the fuse instead.</p>
+              <img src="../imgs/pyro/design1/schematic.png" alt="Pyrocircuit Design 1 schematic" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Breadboarded with a 3.3 V Arduino signal (through voltage divider). E-match lit successfully.</p>
+                    <p>DC sweep ignite voltage with battery on.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here: <img src="../imgs/pyro_rev1_test1.png" alt="..." /> -->
+                      <img src="../imgs/pyro/design1/test-sweep-ignite-battery-on.png" alt="DC sweep ignite with battery on" />
+                    </div>
+                  </li>
+                  <li class="test-item">
+                    <p>Check if ignite goes high but battery is off — pyro doesn't fire.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design1/test-ignite-hi-battery-off.png" alt="Ignite high battery off waveform" />
                     </div>
                   </li>
                 </ul>
@@ -210,16 +262,24 @@
 
             <!-- ── Design 2 ── -->
             <div class="iteration">
-              <h3>Design 2</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 2" class="iteration-img" /> -->
+              <h3>Design 2 — Changed NMOS to AO400A</h3>
+              <p>Changed the NMOS to AO400A because the original had too high of a threshold voltage compared to VOL and VOH for the MCU ignite pin.</p>
+              <img src="../imgs/pyro/design2/schematic.png" alt="Pyrocircuit Design 2 schematic" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Testing in progress.</p>
-                    <span class="pass wip">In Progress</span>
+                    <p>DC sweep ignite with battery on.</p>
+                    <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here -->
+                      <img src="../imgs/pyro/design2/test-sweep-ignite-battery-on.png" alt="DC sweep ignite with battery on" />
+                    </div>
+                  </li>
+                  <li class="test-item">
+                    <p>Pyro still fires if battery sags to 9 V at minimum ignite signal.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design2/test-battery-sag-9v.png" alt="Battery sag to 9V test" />
                     </div>
                   </li>
                 </ul>
@@ -228,16 +288,21 @@
 
             <!-- ── Design 3 ── -->
             <div class="iteration">
-              <h3>Design 3</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 3" class="iteration-img" /> -->
+              <h3>Design 3 — Removed E-match Continuity Sensing</h3>
+              <p>Removed R7 to eliminate the non-functional e-match continuity sensing. Simplified the circuit while keeping the core NMOS/PMOS switching topology.</p>
+              <img src="../imgs/pyro/design3/schematic-and-test.png" alt="Pyrocircuit Design 3 schematic and test" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Testing in progress.</p>
-                    <span class="pass wip">In Progress</span>
+                    <p>DC sweep ignite with battery on.</p>
+                    <span class="pass ok">Pass</span>
+                  </li>
+                  <li class="test-item">
+                    <p>DC sweep ignite at lowest thresholds and highest battery voltage.</p>
+                    <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here -->
+                      <img src="../imgs/pyro/design3/test-lowest-thresh-highest-batt.png" alt="Lowest thresholds highest battery test" />
                     </div>
                   </li>
                 </ul>
@@ -246,16 +311,28 @@
 
             <!-- ── Design 4 ── -->
             <div class="iteration">
-              <h3>Design 4</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 4" class="iteration-img" /> -->
+              <h3>Design 4 — Added E-match Continuity Sensing (Voltage Divider Across PMOS)</h3>
+              <p>Re-added e-match continuity sensing using a voltage divider across the PMOS. Problem: after firing the e-match, the sensing pin would go to 12 V and the limit for the MCU pin is 4 V.</p>
+              <img src="../imgs/pyro/design4/schematic-and-test-lowest-thresh.png" alt="Pyrocircuit Design 4 schematic and test" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Testing in progress.</p>
-                    <span class="pass wip">In Progress</span>
+                    <p>DC sweep ignite at lowest thresholds and highest battery voltage + sense_e.</p>
+                    <span class="pass ok">Pass</span>
+                  </li>
+                  <li class="test-item">
+                    <p>NMOS V<sub>th</sub> = 0.65 V, PMOS V<sub>th</sub> = −3 V, battery = 9 V.</p>
+                    <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here -->
+                      <img src="../imgs/pyro/design4/test-nmos065-pmos3-batt9v.png" alt="NMOS 0.65V PMOS -3V battery 9V test" />
+                    </div>
+                  </li>
+                  <li class="test-item">
+                    <p>NMOS V<sub>th</sub> = 1.45 V, PMOS V<sub>th</sub> = −1 V, battery = 12 V.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design4/test-nmos145-pmos01-batt12v.png" alt="NMOS 1.45V PMOS -1V battery 12V test" />
                     </div>
                   </li>
                 </ul>
@@ -264,16 +341,17 @@
 
             <!-- ── Design 5 ── -->
             <div class="iteration">
-              <h3>Design 5</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 5" class="iteration-img" /> -->
+              <h3>Design 5 — E-match Continuity Sensing via 3.3 V Rail</h3>
+              <p>Attempted e-match continuity sensing using the 3.3 V rail and resistors instead of sensing across the PMOS. Problem: the sense signal is LO both when the e-match is connected and when it is not.</p>
+              <img src="../imgs/pyro/design5/schematic-and-test.png" alt="Pyrocircuit Design 5 schematic and test" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Testing in progress.</p>
-                    <span class="pass wip">In Progress</span>
+                    <p>DC sweep ignite.</p>
+                    <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here -->
+                      <img src="../imgs/pyro/design5/test-sweep-ignite.png" alt="DC sweep ignite test" />
                     </div>
                   </li>
                 </ul>
@@ -282,17 +360,15 @@
 
             <!-- ── Design 6 ── -->
             <div class="iteration">
-              <h3>Design 6</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 6" class="iteration-img" /> -->
+              <h3>Design 6 — Added Diode Clamps</h3>
+              <p>Added diode clamps (BAT54) to protect MCU pins from voltage spikes. Moved to KiCad schematic with real component footprints (FD6673BZ PMOS, AO3400A NMOS). Problem: doesn't protect the SENSE_IO pin from 12 V when firing the e-match.</p>
+              <img src="../imgs/pyro/design6/schematic.png" alt="Pyrocircuit Design 6 KiCad schematic" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
                   <li class="test-item">
-                    <p>Testing in progress.</p>
-                    <span class="pass wip">In Progress</span>
-                    <div class="test-imgs">
-                      <!-- add waveform images here -->
-                    </div>
+                    <p>No passing tests — SENSE_IO pin overvoltage issue identified.</p>
+                    <span class="pass wip">Issue Found</span>
                   </li>
                 </ul>
               </details>
@@ -300,8 +376,9 @@
 
             <!-- ── Design 7 (Final) ── -->
             <div class="iteration">
-              <h3>Design 7</h3>
-              <!-- circuit image: <img src="../imgs/TODO.png" alt="Pyrocircuit Design 7" class="iteration-img" /> -->
+              <h3>Design 7 — Final</h3>
+              <p>Final design with proper e-match continuity sensing, MCU pin protection (BAT54 diode clamps on sense and ignite lines), pullup/pulldown resistors for safe default states, and transient protection capacitors. Uses FD6673BZ PMOS, AO3400A NMOS, and 1812L150/24MR resettable fuse.</p>
+              <img src="../imgs/pyro/design7/schematic.png" alt="Pyrocircuit Design 7 final KiCad schematic" class="iteration-img" />
               <details class="test-details">
                 <summary>View Tests <span class="arrow">→</span></summary>
                 <ul class="test-list">
@@ -309,16 +386,13 @@
                   <li class="test-item">
                     <p>E-match shorts — check if fuse blows after some time.</p>
                     <span class="pass wip">In Progress</span>
-                    <div class="test-imgs">
-                      <!-- add waveform images here -->
-                    </div>
                   </li>
 
                   <li class="test-item">
                     <p>Check if <code>sense_e</code> can go high without firing the e-match.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_sense.png" alt="sense_e test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-sense-e-high-no-fire.png" alt="sense_e high without firing waveform" />
                     </div>
                   </li>
 
@@ -326,7 +400,7 @@
                     <p>Check if PMOS turns on when +12.6 V is armed and IGNITE is 0. It should not turn on.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_pmos.png" alt="PMOS arm test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-pmos-arm-ignite0.png" alt="PMOS arm test waveform" />
                     </div>
                   </li>
 
@@ -334,7 +408,7 @@
                     <p>Check if IGNITE goes high but ARM is off — pyrocircuit should not fire.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_armoff.png" alt="ARM off test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-ignite-hi-arm-off.png" alt="Ignite high ARM off waveform" />
                     </div>
                   </li>
 
@@ -342,7 +416,7 @@
                     <p>Check if a floating IGNITE pin sets off the e-match.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_float.png" alt="Floating pin test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-floating-ignite.png" alt="Floating ignite pin waveform" />
                     </div>
                   </li>
 
@@ -350,7 +424,7 @@
                     <p>Check if pyrocircuit fires correctly when battery sags to 9 V and IGNITE is at its minimum of 2.9 V.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_sag.png" alt="Battery sag test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-battery-sag-fire.png" alt="Battery sag 9V fire test waveform" />
                     </div>
                   </li>
 
@@ -358,15 +432,88 @@
                     <p>Worst-case threshold voltages — check if e-match fires correctly with V<sub>arm</sub> = 12 V, IGNITE = 3.3 V.</p>
                     <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- <img src="../imgs/pyro_rev7_test_nominal.png" alt="Nominal threshold test waveform" /> -->
+                      <img src="../imgs/pyro/design7/test-worse-case-thresh.png" alt="Worst-case threshold test waveform" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>Worst-case thresholds — worse MOSFET thresholds.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-worse-thresh.png" alt="Worse MOSFET threshold test waveform" />
                     </div>
                   </li>
 
                   <li class="test-item">
                     <p>Worst-case thresholds — highest battery voltage, lowest logic thresholds.</p>
-                    <span class="pass wip">In Progress</span>
+                    <span class="pass ok">Pass</span>
                     <div class="test-imgs">
-                      <!-- add waveform images here -->
+                      <img src="../imgs/pyro/design7/test-highest-batt-lowest-thresh.png" alt="Highest battery lowest threshold test waveform" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>E-match disconnected — before and after fire, battery at 12 V. Verify safe voltages.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-sense-e-no-fire.png" alt="E-match disconnected sense test" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>Ignite below 0.4 V with battery on — pyro should not fire.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ignite-below-04v.png" alt="Ignite below 0.4V test" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>Ignite at 2.9 V (MCU GPIO pin high threshold) with battery on.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ignite-29v-threshold.png" alt="Ignite at 2.9V threshold test" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>Inject ignite as a step function — transient response.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ignite-step-function.png" alt="Ignite step function transient" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>Arm battery (step function), then turn on ignite (step function) — full deployment sequence.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-arm-and-ignite-step.png" alt="Arm and ignite step sequence" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>E-match gone (open circuit) — verify voltages remain safe.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ematch-gone-voltage.png" alt="E-match gone voltage test" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>E-match gone — currents sunk/sourced by MCU pins &lt; 8 mA.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ematch-gone-currents.png" alt="E-match gone MCU pin currents" />
+                    </div>
+                  </li>
+
+                  <li class="test-item">
+                    <p>E-match connected, all thresholds average — all currents into MCU pins &lt; 8 mA.</p>
+                    <span class="pass ok">Pass</span>
+                    <div class="test-imgs">
+                      <img src="../imgs/pyro/design7/test-ematch-there-currents.png" alt="E-match connected MCU pin currents" />
+                      <img src="../imgs/pyro/design7/test-worst-thresh-currents.png" alt="Worst threshold MCU pin currents" />
                     </div>
                   </li>
 
