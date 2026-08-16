@@ -357,3 +357,11 @@
   transform: scale(0.95);
 }
 .bucket i { display: block; width: 7px; height: 7px; }
+.bucket-label {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: #2b1b22;
+  opacity: 0.55;
+  text-align: center;
+  white-space: nowrap;
+}

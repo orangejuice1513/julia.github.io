@@ -155,6 +155,7 @@ const BUCKET_FULL = [
 ];
 
 const bucket = document.querySelector('.bucket');
+const bucketLabel = document.querySelector('.bucket-label');
 let caught = false;
 
 function paintBucket() {
@@ -164,7 +165,9 @@ function paintBucket() {
     cell.style.background = PAINT[ch];
     bucket.appendChild(cell);
   }));
-  bucket.setAttribute('aria-label', caught ? 'Release axolotl' : 'Scoop an axolotl');
+  bucketLabel.textContent = caught
+    ? 'bucket of axolotl — click to release'
+    : 'click the bucket to scoop one up';
   // the big axolotl disappears from the pool while it's in the bucket
   const first = swimLayer.firstElementChild;
   if (first) first.style.display = caught ? 'none' : '';
