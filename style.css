@@ -335,6 +335,176 @@ body > nav {
 }
 
 /* ════════════════════════════
+   MUSIC
+════════════════════════════ */
+.music-page {
+  padding: 6rem 3rem 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Spinning vinyl record */
+.record-wrap {
+  margin-bottom: 1.4rem;
+}
+
+.vinyl-record {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(
+      circle at center,
+      #1c1c1c 0px,
+      #1c1c1c 2px,
+      #0a0a0a 3px,
+      #0a0a0a 5px
+    );
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin-record 4s linear infinite;
+}
+
+.vinyl-label {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8b4c0, #f4d9a0);
+  border: 1px solid rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.vinyl-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin-record {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.music-tagline {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3.5rem;
+}
+
+.music-group {
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 3rem;
+}
+
+.music-group:last-child {
+  margin-bottom: 0;
+}
+
+.music-group-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.music-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.music-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.25s, transform 0.25s;
+}
+
+.music-card:not(.music-card--soon):hover {
+  border-color: rgba(255,255,255,0.35);
+  transform: translateX(2px);
+}
+
+.music-card-icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.music-card-icon--yt {
+  color: #e8b4c0;
+}
+
+.music-card-icon--sp {
+  color: #a0d9b4;
+}
+
+.music-card-body {
+  flex: 1;
+}
+
+.music-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.music-card-sub {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.music-card-arrow {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translate(-4px, 0);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.music-card:hover .music-card-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.music-card--soon {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ════════════════════════════
    CONTACT
 ════════════════════════════ */
 .contact-page {
