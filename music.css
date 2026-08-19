@@ -342,7 +342,7 @@
 .bucket-dock {
   position: absolute;
   bottom: 12px;
-  left: 24px;
+  left: 8px;
   z-index: 3;
 }
 .bucket {
