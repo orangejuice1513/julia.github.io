@@ -109,8 +109,6 @@ const AXOLOTL_ART = [
   'FFFFLLLLLLLLLLLLLLLLLPPD',
   'FFFFLLLLLLLLLLLLLLLLLLDD',
   '.FFFLLLLLLLLLLLLLLLLLD..',
-  '..FF...LL......LL...D...',
-  '.......PP.....PP........',
   '......PPP.....PPP.......',
 ];
 // palette swap: one pink axolotl, one blue
