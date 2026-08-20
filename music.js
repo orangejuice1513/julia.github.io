@@ -111,9 +111,10 @@ const AXOLOTL_ART = [
   '.FFFLLLLLLLLLLLLLLLLLD..',
   '......PPP.....PPP.......',
 ];
-// palette swap: one pink axolotl, one blue
+// palette swap: pink, light blue, dark purple-blue
 const PINK = { P: '#f6b3d0', L: '#ffe0ee', F: '#eda3c6', D: '#c9749d', G: '#ff92c2', g: '#e56ba3' };
 const BLUE = { P: '#a8cdf2', L: '#dfeeff', F: '#93bde8', D: '#6a8fbd', G: '#8fc4ff', g: '#6b9ad9' };
+const PURPLE = { P: '#7b6cc7', L: '#a99fe6', F: '#6a5bb5', D: '#453a85', G: '#9686f0', g: '#6f5fc9' };
 const SHARED = {
   E: '#2b1b22', W: '#ffffff',
   S: '#b9c2c8', s: '#7d878e', i: '#4d5a62', A: '#58c8c0', '.': 'transparent',
@@ -123,9 +124,11 @@ const PAINT = { ...PINK, ...SHARED };
 const AXOLOTLS = [
   ['0px', '9px', '26s', '0s', '3.2s', PINK],
   ['96px', '7px', '34s', '6s', '4.1s', BLUE],
+  ['48px', '8px', '30s', '3s', '4.8s', PURPLE],
 ];
 
 const swimLayer = document.querySelector('.swimmers');
+const swimmerPalettes = new Map();
 AXOLOTLS.forEach(([top, px, dur, delay, bob, pal]) => {
   const map = { ...pal, ...SHARED };
   const swimmer = el('swimmer', { top, animationDuration: dur, animationDelay: delay });
@@ -140,6 +143,7 @@ AXOLOTLS.forEach(([top, px, dur, delay, bob, pal]) => {
   bobber.appendChild(sprite);
   swimmer.appendChild(bobber);
   swimLayer.appendChild(swimmer);
+  swimmerPalettes.set(swimmer, map);
 });
 
 /* ---------- bucket: click to scoop / release an axolotl ---------- */
@@ -155,23 +159,34 @@ const BUCKET_FULL = [
 const bucket = document.querySelector('.bucket');
 const bucketLabel = document.querySelector('.bucket-label');
 let caught = false;
+let caughtSwimmer = null;
 
 function paintBucket() {
   bucket.textContent = '';
+  const paint = (caught && caughtSwimmer) ? swimmerPalettes.get(caughtSwimmer) : PAINT;
   (caught ? BUCKET_FULL : BUCKET_EMPTY).forEach((row) => row.split('').forEach((ch) => {
     const cell = document.createElement('i');
-    cell.style.background = PAINT[ch];
+    cell.style.background = paint[ch];
     bucket.appendChild(cell);
   }));
   bucketLabel.textContent = caught
     ? 'bucket of axolotl — click to release'
     : 'click the bucket to scoop one up';
-  // the big axolotl disappears from the pool while it's in the bucket
-  const first = swimLayer.firstElementChild;
-  if (first) first.style.display = caught ? 'none' : '';
 }
 
-bucket.addEventListener('click', () => { caught = !caught; paintBucket(); });
+bucket.addEventListener('click', () => {
+  caught = !caught;
+  if (caught) {
+    // scoop up a random axolotl from the pool; it disappears while in the bucket
+    const swimmers = Array.from(swimLayer.children);
+    caughtSwimmer = swimmers[Math.floor(Math.random() * swimmers.length)];
+    if (caughtSwimmer) caughtSwimmer.style.display = 'none';
+  } else if (caughtSwimmer) {
+    caughtSwimmer.style.display = '';
+    caughtSwimmer = null;
+  }
+  paintBucket();
+});
 bucket.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bucket.click(); }
 });

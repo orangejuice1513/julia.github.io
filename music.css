@@ -315,7 +315,7 @@
 .swimmer {
   position: absolute;
   left: 0;
-  animation: swim linear infinite;
+  animation: swim linear infinite backwards;
 }
 .swimmer .bobber { animation: bob ease-in-out infinite; }
 .swimmer .sprite {
